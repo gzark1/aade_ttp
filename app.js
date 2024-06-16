@@ -1,102 +1,32 @@
 require('dotenv').config();
-const puppeteer = require('puppeteer');
-const fs = require('fs');
+const express = require('express');
+const helmet = require('helmet');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
+const path = require('path');
 
-const delay = (time) => {
-  return new Promise((resolve) => setTimeout(resolve, time));
-};
+const app = express();
 
-// Function to extract and store request_id
-const store_request_id = (url) => {
-  const urlObj = new URL(url);
-  const request_id = urlObj.searchParams.get('request_id');
-  if (request_id) {
-    fs.appendFile('request_ids', request_id + '\n', (err) => {
-      if (err) throw err;
-      console.log(`Stored request_id: ${request_id}`);
-    });
-  } else {
-    console.log('request_id not found in URL');
-  }
-};
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-(async () => {
-  try {
-    // Launch a new browser session
-    const browser = await puppeteer.launch({ headless: false }); // Set headless to false if you want to see the browser actions
-    const page = await browser.newPage();
+app.use(helmet());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-    // Navigate to the initial page
-    await page.goto('https://www.aade.gr/dilosi-e9-enfia');
-    console.log('Navigated to the initial page.');
+const csrfProtection = csrf({ cookie: true });
 
-    // Wait for the cookie popup and click the accept button
-    await page.waitForSelector('.agree-button.eu-cookie-compliance-default-button', { visible: true });
-    await page.click('.agree-button.eu-cookie-compliance-default-button');
-    console.log('Clicked the cookie accept button.');
+// Routes
+app.get('/login', csrfProtection, (req, res) => {
+  const service = req.query.service || 'default service';
+  res.render('login', { csrfToken: req.csrfToken(), service });
+});
 
-    // Wait for 2 seconds
-    await delay(2000);
+// Start Server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
-    // Set up a listener for the new target (new tab)
-    const [newPagePromise] = await Promise.all([
-      new Promise(resolve => browser.once('targetcreated', target => resolve(target.page()))),
-      // Click the specific div containing the login button
-      page.click('div.field--name-field-koympi.field--type-link.field--label-hidden.field__item a')
-    ]);
-    const newPage = await newPagePromise;
-    console.log('Clicked the button to navigate to the login page.');
-
-    store_request_id(newPage.url());
-    // Wait for 2 seconds
-    await delay(2000);
-
-    // Check if we are already on the login page by checking the URL
-    if (!newPage.url().includes('login')) {
-      // Wait for navigation to the login page in the new tab
-      await newPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 60000 });
-      console.log('Navigated to the login page.');
-    } else {
-      console.log('Already navigated to the login page.');
-    }
-
-    // Take a screenshot after navigation to debug
-    await newPage.screenshot({ path: 'after-navigation.png' });
-
-    // Wait for the login form to be available, increase timeout to 60 seconds
-    await newPage.waitForSelector('input[name="username"]', { visible: true, timeout: 60000 });
-    await newPage.waitForSelector('input[name="password"]', { visible: true, timeout: 60000 });
-    console.log('Login form is visible.');
-
-    // Enter username and password
-    await newPage.type('input[name="username"]', process.env.AADE_USERNAME);
-    await newPage.type('input[name="password"]', process.env.AADE_PASSWORD);
-    console.log('Entered username and password.');
-
-    // Wait for 2 seconds
-    await delay(2000);
-
-    // Click the login button
-    await newPage.waitForSelector('button[name="btn_login"]', { visible: true });
-    await newPage.click('button[name="btn_login"]');
-    console.log('Clicked the login button.');
-
-    // Wait for 2 seconds
-    await delay(2000);
-
-    // Wait for navigation to finish with no timeout
-    await newPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
-    console.log('Navigated to the post-login page.');
-
-    // Get the HTML content of the page you are redirected to
-    const content = await newPage.content();
-
-    // Process the data (this is just an example, you'll need to parse the content as needed)
-    console.log(content);
-
-    // Close the browser session
-    await browser.close();
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
-})();
