@@ -43,9 +43,6 @@ const performE9Task = async (username, password) => {
       console.log('Already navigated to the login page.');
     }
 
-    // Take a screenshot after navigation to debug
-    await newPage.screenshot({ path: 'after-navigation.png' });
-
     // Wait for the login form to be available, increase timeout to 60 seconds
     await newPage.waitForSelector('input[name="username"]', { visible: true, timeout: 60000 });
     await newPage.waitForSelector('input[name="password"]', { visible: true, timeout: 60000 });
