@@ -20,7 +20,7 @@ const performE9Task = async (username, password) => {
     console.log('Clicked the cookie accept button.');
 
     // Wait for 2 seconds
-    await delay(2000);
+    await delay(1000);
 
     // Set up a listener for the new target (new tab)
     const [newPagePromise] = await Promise.all([
@@ -32,7 +32,7 @@ const performE9Task = async (username, password) => {
     console.log('Clicked the button to navigate to the login page.');
 
     // Wait for 2 seconds
-    await delay(2000);
+    await delay(1000);
 
     // Check if we are already on the login page by checking the URL
     if (!newPage.url().includes('login')) {
@@ -57,7 +57,7 @@ const performE9Task = async (username, password) => {
     console.log('Entered username and password.');
 
     // Wait for 2 seconds
-    await delay(2000);
+    await delay(1000);
 
     // Click the login button
     await newPage.waitForSelector('button[name="btn_login"]', { visible: true });
@@ -67,25 +67,20 @@ const performE9Task = async (username, password) => {
     // Wait for 2 seconds
     await delay(2000);
 
-    // Wait for navigation to finish with no timeout
-
-    // Click the button with id="pt1:cbEnter"
+    // Click the 'Enter' (Είσοδος) button in the instructions page 
     await newPage.waitForSelector('#pt1\\:cbEnter', { visible: true });
     await newPage.click('#pt1\\:cbEnter');
-    console.log('Clicked the button with id="pt1:cbEnter".');
+    console.log('Clicked the "Enter" (Είσοδος) button in the instructions page');
 
     // Wait for navigation to finish after clicking the button
     await newPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
     console.log('Navigated to the next page after clicking the button.');
 
-    // Get the HTML content of the page you are redirected to
-    const data = await newPage.content();
+    // Click the 'Declarations' (Δηλώσεις) <a> tag 
+    await newPage.click('#pt1\\:e9Tab\\:\\:disAcr');
+    console.log('Clicked the Declarations <a> tag');
 
-    // Process the data (this is just an example, you'll need to parse the content as needed)
-    console.log(data);
-
-    await browser.close();
-    return data;
+    await delay(9999999)
   } catch (error) {
     await browser.close();
     throw error;
