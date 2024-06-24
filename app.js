@@ -29,7 +29,7 @@ const services = {
 
 // Routes
 app.get('/login', csrfProtection, (req, res) => {
-  const service = req.query.service || 'default service';
+  const service = req.query.service || 'default service'; //we want it to also get the UUID
   res.render('login', { csrfToken: req.csrfToken(), service });
 });
 

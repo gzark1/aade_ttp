@@ -19,3 +19,5 @@ const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Company website server is running on port ${PORT}`);
 });
+
+//we have to implement the company's endpoint (get) so that it receives the user's data
