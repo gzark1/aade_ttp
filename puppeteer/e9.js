@@ -15,8 +15,12 @@ const performE9Task = async (username, password) => {
     console.log('Navigated to the initial page.');
 
     // Wait for the cookie popup and click the accept button
-    await page.waitForSelector('.agree-button.eu-cookie-compliance-default-button', { visible: true });
-    await page.click('.agree-button.eu-cookie-compliance-default-button');
+    const cookieButton = await page.waitForSelector('.agree-button.eu-cookie-compliance-default-button', { visible: true, timeout: 2000 });
+    console.log("found the cookie button")
+    if (cookieButton) {
+      await cookieButton.click();
+    } 
+    //await page.click('.agree-button.eu-cookie-compliance-default-button');
     console.log('Clicked the cookie accept button.');
 
     // Wait for 2 seconds
@@ -73,9 +77,9 @@ const performE9Task = async (username, password) => {
     await newPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
     console.log('Navigated to the next page after clicking the button.');
 
-    // Click the 'Declarations' (Δηλώσεις) <a> tag 
-    await newPage.click('#pt1\\:e9Tab\\:\\:disAcr');
-    console.log('Clicked the Declarations <a> tag');
+    // Click the 'Estates and lands' (Περιουσιακή Κατάσταση) <a> tag 
+    await newPage.click('#pt1\\:estatesAndLandsTab\\:\\:disAcr');
+    console.log('Clicked the Estates and lands <a> tag');
 
     await delay(9999999)
   } catch (error) {
