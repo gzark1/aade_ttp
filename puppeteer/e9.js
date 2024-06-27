@@ -13,14 +13,10 @@ const performE9Task = async (username, password) => {
     // Navigate to the initial page
     await page.goto('https://www.aade.gr/dilosi-e9-enfia');
     console.log('Navigated to the initial page.');
-
-    // Wait for the cookie popup and click the accept button
-    const cookieButton = await page.waitForSelector('.agree-button.eu-cookie-compliance-default-button', { visible: true, timeout: 2000 });
-    console.log("found the cookie button")
-    if (cookieButton) {
-      await cookieButton.click();
-    } 
-    //await page.click('.agree-button.eu-cookie-compliance-default-button');
+    
+    // Use locator for the cookie button
+    const cookieButton = page.locator('.agree-button.eu-cookie-compliance-default-button');
+    await cookieButton.click({ timeout: 2000 }).catch(() => console.log('Cookie button not found or not clickable.'));
     console.log('Clicked the cookie accept button.');
 
     // Wait for 2 seconds
@@ -29,8 +25,8 @@ const performE9Task = async (username, password) => {
     // Set up a listener for the new target (new tab)
     const [newPagePromise] = await Promise.all([
       new Promise(resolve => browser.once('targetcreated', target => resolve(target.page()))),
-      // Click the specific div containing the login button
-      page.click('div.field--name-field-koympi.field--type-link.field--label-hidden.field__item a')
+      // Click the specific div containing the login button using locator
+      page.locator('div.field--name-field-koympi.field--type-link.field--label-hidden.field__item a').click()
     ]);
     const newPage = await newPagePromise;
     console.log('Clicked the button to navigate to the login page.');
@@ -47,38 +43,31 @@ const performE9Task = async (username, password) => {
       console.log('Already navigated to the login page.');
     }
 
-    // Wait for the login form to be available, increase timeout to 60 seconds
-    await newPage.waitForSelector('input[name="username"]', { visible: true, timeout: 60000 });
-    await newPage.waitForSelector('input[name="password"]', { visible: true, timeout: 60000 });
-    console.log('Login form is visible.');
-
     // Enter username and password
-    await newPage.type('input[name="username"]', username);
-    await newPage.type('input[name="password"]', password);
+    await newPage.locator('input[name="username"]').fill(username);
+    await newPage.locator('input[name="password"]').fill(password);
     console.log('Entered username and password.');
 
     // Wait for 2 seconds
     await delay(1000);
 
-    // Click the login button
-    await newPage.waitForSelector('button[name="btn_login"]', { visible: true });
-    await newPage.click('button[name="btn_login"]');
+    // Click the login button using locator
+    await newPage.locator('button[name="btn_login"]').click();
     console.log('Clicked the login button.');
 
     // Wait for 2 seconds
     await delay(2000);
 
-    // Click the 'Enter' (Είσοδος) button in the instructions page 
-    await newPage.waitForSelector('#pt1\\:cbEnter', { visible: true });
-    await newPage.click('#pt1\\:cbEnter');
+    // Click the 'Enter' (Είσοδος) button in the instructions page using locator
+    await newPage.locator('#pt1\\:cbEnter').click();
     console.log('Clicked the "Enter" (Είσοδος) button in the instructions page');
 
     // Wait for navigation to finish after clicking the button
     await newPage.waitForNavigation({ waitUntil: 'networkidle2', timeout: 0 });
     console.log('Navigated to the next page after clicking the button.');
 
-    // Click the 'Estates and lands' (Περιουσιακή Κατάσταση) <a> tag 
-    await newPage.click('#pt1\\:estatesAndLandsTab\\:\\:disAcr');
+    // Click the 'Estates and lands' (Περιουσιακή Κατάσταση) <a> tag using locator
+    await newPage.locator('#pt1\\:estatesAndLandsTab\\:\\:disAcr').click();
     console.log('Clicked the Estates and lands <a> tag');
 
     await delay(9999999)
