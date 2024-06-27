@@ -14,9 +14,9 @@ const performE9Task = async (username, password) => {
     await page.goto('https://www.aade.gr/dilosi-e9-enfia');
     console.log('Navigated to the initial page.');
     
-    // Use locator for the cookie button
-    const cookieButton = page.locator('.agree-button.eu-cookie-compliance-default-button');
-    await cookieButton.click({ timeout: 2000 }).catch(() => console.log('Cookie button not found or not clickable.'));
+    // Use locator for the cookie button  -- TODO Test
+    const cookieButton = page.locator('.agree-button.eu-cookie-compliance-default-button').setTimeout(2000);
+    await cookieButton.click().catch(() => console.log('Cookie button not found or not clickable.'));
     console.log('Clicked the cookie accept button.');
 
     // Wait for 2 seconds
