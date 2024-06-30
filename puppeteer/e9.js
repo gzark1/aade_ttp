@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const fs = require('fs');
+const InvalidCredentialsError = require('../errors/InvalidCredentialsError');
 
 const delay = (time) => {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -16,7 +16,7 @@ const performE9Task = async (username, password) => {
     
     // Use locator for the cookie button  -- TODO Test
     const cookieButton = page.locator('.agree-button.eu-cookie-compliance-default-button').setTimeout(2000);
-    await cookieButton.click().catch(() => console.log('Cookie button not found or not clickable.'));
+    await cookieButton.click(() => 'Clicked the cookie accept button.').catch(() => console.log('Cookie button not found or not clickable.'));
     console.log('Clicked the cookie accept button.');
 
     // Wait for 2 seconds
@@ -58,6 +58,13 @@ const performE9Task = async (username, password) => {
     // Wait for 2 seconds
     await delay(2000);
 
+    // Check if the URL contains error parameters
+    const currentUrl = newPage.url();
+    if (currentUrl.includes('p_error_code=OAM-2')) {
+      console.log('Login failed due to incorrect credentials.');
+      throw new InvalidCredentialsError('Incorrect username or password');
+    }
+    
     // Click the 'Enter' (Είσοδος) button in the instructions page using locator
     await newPage.locator('#pt1\\:cbEnter').click();
     console.log('Clicked the "Enter" (Είσοδος) button in the instructions page');

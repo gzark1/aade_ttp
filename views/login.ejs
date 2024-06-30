@@ -4,9 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login to AADE</title>
+  <style>
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
   <h1>Login to AADE for <%= service %></h1>
+  <% if (error === 'invalid_credentials') { %>
+    <p class="error">Incorrect username or password. Please try again.</p>
+  <% } %>
   <form action="/login" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <input type="hidden" name="service" value="<%= service %>">

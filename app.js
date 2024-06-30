@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const e9Service = require('./puppeteer/e9');
 const otherService = require('./puppeteer/other-service');
+const errorHandler = require('./middleware/errorHandler');
+const InvalidCredentialsError = require('./errors/InvalidCredentialsError');
 
 const app = express();
 
@@ -30,10 +32,11 @@ const services = {
 // Routes
 app.get('/login', csrfProtection, (req, res) => {
   const service = req.query.service || 'default service'; //we want it to also get the UUID
-  res.render('login', { csrfToken: req.csrfToken(), service });
+  const error = req.query.error;
+  res.render('login', { csrfToken: req.csrfToken(), service, error });
 });
 
-app.post('/login', csrfProtection, async (req, res) => {
+app.post('/login', csrfProtection, async (req, res, next) => {
   const { username, password, service } = req.body;
   try {
     if (services[service]) {    //check if this service exists. 
@@ -43,9 +46,12 @@ app.post('/login', csrfProtection, async (req, res) => {
       res.status(400).send('This service does not exist in AADE');
     }
   } catch (error) {
-    res.status(500).send('An error occurred1: ' + error.message); //this is getting printed if an error occurs (even in the middle of the service script)
+    next(error);
   }
 });
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Start Server
 const PORT = process.env.PORT || 3000;
