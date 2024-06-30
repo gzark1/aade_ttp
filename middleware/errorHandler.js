@@ -5,7 +5,7 @@ function errorHandler(err, req, res, next) {
       // Redirect to the login page with an error message
       res.redirect(`/login?service=${req.body.service}&error=invalid_credentials`);
     } else if (err.statusCode) {
-      res.status(err.statusCode).json({ error: err.message });
+      return res.status(err.statusCode).render('error', {message: err.message });
     } else {
       res.status(500).json({ error: 'Internal Server Error' });
     }

@@ -1,6 +1,4 @@
-require('dotenv').config();
 const express = require('express');
-
 const helmet = require('helmet');
 const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
@@ -8,7 +6,7 @@ const path = require('path');
 const e9Service = require('./puppeteer/e9');
 const otherService = require('./puppeteer/other-service');
 const errorHandler = require('./middleware/errorHandler');
-const InvalidCredentialsError = require('./errors/InvalidCredentialsError');
+const InvalidServiceError = require('./errors/InvalidServiceError');
 
 const app = express();
 
@@ -30,27 +28,31 @@ const services = {
 };
 
 // Routes
-app.get('/login', csrfProtection, (req, res) => {
-  const service = req.query.service || 'default service'; //we want it to also get the UUID
+app.get('/login', csrfProtection, (req, res, next) => {
+  const service = req.query.service || 'default service';
   const error = req.query.error;
+  
+  if (!services[service]) {
+    return next(new InvalidServiceError());
+  }
+  
   res.render('login', { csrfToken: req.csrfToken(), service, error });
 });
 
 app.post('/login', csrfProtection, async (req, res, next) => {
   const { username, password, service } = req.body;
   try {
-    if (services[service]) {    //check if this service exists. 
+    if (services[service]) {
       const result = await services[service](username, password);
       res.send({ service, result });
     } else {
-      res.status(400).send('This service does not exist in AADE');
+      return next(new InvalidServiceError());
     }
   } catch (error) {
     next(error);
   }
 });
 
-// Error handling middleware
 app.use(errorHandler);
 
 // Start Server
@@ -58,4 +60,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
