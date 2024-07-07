@@ -94,7 +94,7 @@ const getPropertyData = async (page) => {
     for (const row of rows) {
       const rowData = await page.evaluate(el => el.innerText, row);
       const cells = rowData.split('\t').map(cell => cell.trim() || ''); // Split cells and handle empty cells
-      const filledSchema = fillSchema(propertySchema, cells);
+      const filledSchema = fillSchema(JSON.parse(JSON.stringify(propertySchema)), cells);
       propertyData.push(filledSchema);
     }
 
@@ -278,7 +278,7 @@ const performE9Task = async (username, password) => {
       "land lot data": landLotData
     };
 
-    console.log(data);
+    return data;
 
     await delay(9999999)
   } catch (error) {

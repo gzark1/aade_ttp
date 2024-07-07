@@ -14,10 +14,27 @@ app.get('/', (req, res) => {
   res.render('company');
 });
 
+// Endpoint to accept JSON data
+app.post('/receive-data', (req, res) => {
+  const { uuid, selectedPropertyRecords, selectedLandLotRecords, obligorData } = req.body;
+  console.log('Received Data:', {
+    uuid,
+    selectedPropertyRecords,
+    selectedLandLotRecords,
+    obligorData
+  });
+
+  res.json({
+    status: 'success',
+    uuid,
+    selectedPropertyRecords,
+    selectedLandLotRecords,
+    obligorData
+  });
+});
+
 // Start Server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Company website server is running on port ${PORT}`);
 });
-
-//we have to implement the company's endpoint (get) so that it receives the user's data

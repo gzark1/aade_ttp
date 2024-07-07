@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Selected Data</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body class="container">
+  <h1 class="my-4">Review Selected Data for <%= service %></h1>
+  <form action="/confirm-submission" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="uuid" value="<%= uuid %>">
+    <input type="hidden" name="selectedPropertyRecords" value='<%= JSON.stringify(selectedPropertyRecords) %>'>
+    <input type="hidden" name="selectedLandLotRecords" value='<%= JSON.stringify(selectedLandLotRecords) %>'>
+    <input type="hidden" name="obligorData" value='<%= JSON.stringify(obligorData) %>'>
+
+    <h2 class="my-3">Selected Obligor's Data</h2>
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <% Object.keys(obligorData).forEach(key => { %>
+            <th><%= key %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <% Object.values(obligorData).forEach(value => { %>
+            <td><%= value %></td>
+          <% }) %>
+        </tr>
+      </tbody>
+    </table>
+
+    <% if (selectedPropertyRecords.length > 0) { %>
+    <h2 class="my-3">Selected Property Records</h2>
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <% Object.keys(selectedPropertyRecords[0]).forEach(key => { %>
+            <th><%= key %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% selectedPropertyRecords.forEach(record => { %>
+          <tr>
+            <% Object.values(record).forEach(value => { %>
+              <td><%= value %></td>
+            <% }) %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+
+    <% if (selectedLandLotRecords.length > 0) { %>
+    <h2 class="my-3">Selected Land Lot Records</h2>
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <% Object.keys(selectedLandLotRecords[0]).forEach(key => { %>
+            <th><%= key %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <% selectedLandLotRecords.forEach(record => { %>
+          <tr>
+            <% Object.values(record).forEach(value => { %>
+              <td><%= value %></td>
+            <% }) %>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+    
+    <button type="submit" class="btn btn-primary mt-3">Send Data to Company</button>
+  </form>
+</body>
+</html>

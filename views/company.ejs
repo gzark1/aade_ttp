@@ -4,19 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Company Website</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
 </head>
-<body>
-  <h1>Welcome to the Company Website</h1>
-  <p>Click the button below to proceed to the TTP application for the E9 service.</p>
-  <form action="http://localhost:3000/login" method="get">
-    <input type="hidden" name="service" value="e9">
-    <!--a unique uuid input-->
-    <button type="submit">Proceed to TTP Application</button>
-  </form>
-  <p>Click the button below to proceed to the TTP application for the other service.</p>
-  <form action="http://localhost:3000/login" method="get">
-    <input type="hidden" name="service" value="other-service">
-    <button type="submit">Proceed to TTP Application</button>
-  </form>
+<body class="container">
+  <div class="text-center my-4">
+    <img src="/images/insurance.jpg" alt="Greek Insurance Companies Logo" class="img-fluid mb-3">
+    <h1>Welcome to the Greek Insurance Companies Portal</h1>
+    <p>Select the service you wish to proceed with:</p>
+    <form action="http://localhost:3000/login" method="get" class="mb-3">
+      <input type="hidden" name="service" value="e9">
+      <button type="submit" class="btn btn-primary">Proceed to E9 Service</button>
+    </form>
+    <form action="http://localhost:3000/login" method="get">
+      <input type="hidden" name="service" value="other-service">
+      <button type="submit" class="btn btn-secondary">Proceed to Other Service</button>
+    </form>
+  </div>
 </body>
 </html>

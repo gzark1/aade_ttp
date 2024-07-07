@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Table</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body class="container">
+  <h1>Data Retrieved for <%= service %></h1>
+  <form action="/submit-selected-data" method="post">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="uuid" value="<%= uuid %>">
+
+    <h2>Obligor's Data</h2>
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <% Object.keys(data["obligor's data"]).forEach(key => { %>
+            <th><%= key %></th>
+          <% }) %>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <% Object.values(data["obligor's data"]).forEach(value => { %>
+            <td><%= value %></td>
+          <% }) %>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Property Data</h2>
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th>Select</th>
+          <% if (Array.isArray(data["property data"]) && data["property data"].length > 0) { %>
+            <% Object.keys(data["property data"][0]).forEach(key => { %>
+              <th><%= key %></th>
+            <% }) %>
+          <% } %>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (Array.isArray(data["property data"]) && data["property data"].length > 0) { %>
+          <% data["property data"].forEach((record, index) => { %>
+            <tr>
+              <td><input type="checkbox" name="selectedPropertyRecords" value='<%= JSON.stringify(record) %>'></td>
+              <% Object.values(record).forEach(value => { %>
+                <td><%= value %></td>
+              <% }) %>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="3"><%= data["property data"] %></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <h2>Land Lot Data</h2>
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th>Select</th>
+          <% if (Array.isArray(data["land lot data"]) && data["land lot data"].length > 0) { %>
+            <% Object.keys(data["land lot data"][0]).forEach(key => { %>
+              <th><%= key %></th>
+            <% }) %>
+          <% } %>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (Array.isArray(data["land lot data"]) && data["land lot data"].length > 0) { %>
+          <% data["land lot data"].forEach((record, index) => { %>
+            <tr>
+              <td><input type="checkbox" name="selectedLandLotRecords" value='<%= JSON.stringify(record) %>'></td>
+              <% Object.values(record).forEach(value => { %>
+                <td><%= value %></td>
+              <% }) %>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="3"><%= data["land lot data"] %></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-success">Submit Selected Records</button>
+  </form>
+</body>
+</html>
