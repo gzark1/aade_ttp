@@ -17,12 +17,13 @@ app.get('/', (req, res) => {
 // Endpoint to accept JSON data
 app.post('/receive-data', (req, res) => {
   const { uuid, selectedPropertyRecords, selectedLandLotRecords, obligorData } = req.body;
-  console.log('Received Data:', {
+  console.log('Received Data: \n');
+  console.log(JSON.stringify({
     uuid,
     selectedPropertyRecords,
     selectedLandLotRecords,
     obligorData
-  });
+  }));
 
   res.json({
     status: 'success',

@@ -279,8 +279,6 @@ const performE9Task = async (username, password) => {
     };
 
     return data;
-
-    await delay(9999999)
   } catch (error) {
     await browser.close();
     throw error;

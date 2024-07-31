@@ -54,6 +54,8 @@
         <% }) %>
       </tbody>
     </table>
+    <% } else { %>
+      <p>No property records selected.</p>
     <% } %>
 
     <% if (selectedLandLotRecords.length > 0) { %>
@@ -66,7 +68,7 @@
           <% }) %>
         </tr>
       </thead>
-      <tbody>
+      <tbody> 
         <% selectedLandLotRecords.forEach(record => { %>
           <tr>
             <% Object.values(record).forEach(value => { %>
@@ -76,8 +78,10 @@
         <% }) %>
       </tbody>
     </table>
+    <% } else { %>
+      <p>No land lot records selected.</p>
     <% } %>
-    
+
     <button type="submit" class="btn btn-primary mt-3">Send Data to Company</button>
   </form>
 </body>

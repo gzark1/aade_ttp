@@ -12,6 +12,7 @@
   <form action="/submit-selected-data" method="post">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <input type="hidden" name="uuid" value="<%= uuid %>">
+    <input type="hidden" name="obligorData" value="<%= JSON.stringify(data["obligor's data"]) %>">
 
     <h2>Obligor's Data</h2>
     <table class="table table-bordered">
